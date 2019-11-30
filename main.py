@@ -62,4 +62,7 @@ for run in range(runtimes):
     if unif_rand <= np.exp(acceptance_ratio):
         encrypted_text = swapped_text
 
-print(encrypted_text)
+    if (run+1)%int(runtimes/10)==0:
+        print(run+1, current_score, '\n', encrypted_text[:140],'\n')
+
+print(80*'-'+'\n', encrypted_text)
