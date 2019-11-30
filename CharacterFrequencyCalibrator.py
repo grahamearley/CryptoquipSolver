@@ -34,7 +34,7 @@ class CharacterFrequencyCalibrator:
 
         i = 0
         while i < text_length:
-            char_pair = clean_text[i] + clean_text[i+1]
+            char_pair = clean_text[i:i+2]
 
             if char_pair in frequencies_dict:
                 frequencies_dict[char_pair] += 1

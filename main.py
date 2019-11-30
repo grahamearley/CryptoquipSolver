@@ -5,19 +5,20 @@ Read more about the algorithm here:
 https://en.wikipedia.org/wiki/Metropolis–Hastings_algorithm
 """
 import random
+import numpy as np
 
 from CharacterFrequencyCalibrator import CharacterFrequencyCalibrator
 from SwapEncryptor import SwapEncryptor
 
 
 def calculate_score(text, calibrator):
-    score = 1
+    score = 0.0
     i = 0
     while i < len(text) - 2:
-        code_char_pair = text[i] + text[i + 1]
+        code_char_pair = text[i:i+2]
 
         if code_char_pair in calibrator.frequencies_dict:
-            score *= calibrator.frequencies_dict[code_char_pair]
+            score += np.log(calibrator.frequencies_dict[code_char_pair])
 
         i += 1
 
@@ -44,7 +45,7 @@ calibrator = CharacterFrequencyCalibrator("ShakespeareWorks.txt")
 encrypted_text = encryptor.encrypt(open('secret.txt', 'r').read().lower())
 
 letters = "qwertyuiopasdfghjklzxcvbnm"
-runtimes = 10000
+runtimes = 3000
 for run in range(runtimes):
     # Pick two characters to swap (uniformly, at random)
     swap_char1 = random.choice(letters)
@@ -54,11 +55,11 @@ for run in range(runtimes):
     swapped_text = swap_chars_in_text(encrypted_text, swap_char1, swap_char2)
     proposed_score = calculate_score(swapped_text, calibrator)
     current_score = calculate_score(encrypted_text, calibrator)
-    acceptance_ratio = proposed_score / current_score
+    acceptance_ratio = proposed_score - current_score
 
-    unif_rand = random.uniform(0, 1)
+    unif_rand = np.random.uniform()
 
-    if unif_rand <= acceptance_ratio:
+    if unif_rand <= np.exp(acceptance_ratio):
         encrypted_text = swapped_text
 
 print(encrypted_text)
